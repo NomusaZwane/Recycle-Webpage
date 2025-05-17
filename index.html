@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nomusa's Recycle</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f9fa;
+      color: #08fa85; /* bottle green base text */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background: #08f169; /* bottle green */
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 10px rgba(91, 133, 120, 0.7);
+      position: sticky;
+      top: 0;
+      z-index: 1100;
+      user-select: none;
+    }
+
+    nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: default;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Navigation menu */
+    ul.menu {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+      transition: max-height 0.4s ease;
+    }
+
+    ul.menu li a {
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    ul.menu li a:focus,
+    ul.menu li a:hover {
+      color: #0b07e9; /* lighter bottle green highlight */
+      outline: 2px solid #599a56;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* Neat Hamburger toggle */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 0;
+      width: 35px;
+      height: 29px;
+      position: relative;
+      user-select: none;
+      z-index: 1200;
+      transition: all 0.3s ease;
+    }
+    .menu-toggle span {
+      display: block;
+      position: absolute;
+      height: 4px;
+      width: 100%;
+      background: white;
+      border-radius: 2px;
+      opacity: 1;
+      left: 0;
+      transition: all 0.3s ease;
+    }
+    .menu-toggle span:nth-child(1) {
+      top: 0;
+    }
+    .menu-toggle span:nth-child(2) {
+      top: 12.5px;
+    }
+    .menu-toggle span:nth-child(3) {
+      top: 25px;
+    }
+
+    .menu-toggle.open span:nth-child(1) {
+      top: 12.5px;
+      width: 0;
+      left: 50%;
+    }
+    .menu-toggle.open span:nth-child(2) {
+      transform: rotate(45deg);
+    }
+    .menu-toggle.open span:nth-child(3) {
+      top: 12.5px;
+      transform: rotate(-45deg);
+    }
+
+    /* Responsive nav styles */
+    @media (max-width: 768px) {
+      ul.menu {
+        position: absolute;
+        top: 100%;
+        right: 2rem;
+        background: #0c21df;
+        flex-direction: column;
+        border-radius: 8px;
+        overflow: hidden;
+        max-height: 0;
+        width: 180px;
+        box-shadow: 0 8px 15px rgba(27, 77, 62, 0.9);
+      }
+
+      ul.menu.open {
+        max-height: 500px;
+      }
+
+      ul.menu li {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      ul.menu li:last-child {
+        border-bottom: none;
+      }
+
+      ul.menu li a {
+        padding: 1rem 1.3rem;
+        display: block;
+      }
+
+      .menu-toggle {
+        display: inline-block;
+      }
+    }
+
+    main {
+      flex-grow: 1;
+      max-width: 1100px;
+      margin: 2rem auto 4rem;
+      padding: 0 1rem;
+      user-select: none;
+    }
+
+    /* Animate fade in letters */
+    .fade-slide {
+      opacity: 0;
+      transform: translateY(25px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+      will-change: opacity, transform;
+    }
+    .fade-slide.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero {
+      position: relative;
+      background: #1204ce; /* solid bottle green */
+      border-radius: 12px;
+      color: white;
+      padding: 7rem 2rem 7rem 2rem;
+      text-align: center;
+      box-shadow: 0 10px 35px rgba(27, 77, 62, 0.7);
+      overflow: hidden;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 0.75rem;
+      text-shadow: 2px 2px 8px rgba(201, 26, 26, 0.6);
+      transition: text-shadow 0.3s ease;
+    }
+    .hero h1:hover,
+    .hero h1:focus {
+      text-shadow: 3px 3px 20px rgba(0, 0, 0, 0.8);
+      outline: none;
+    }
+
+    .hero p {
+      font-size: 1.4rem;
+      max-width: 700px;
+      margin: 0 auto 1.5rem;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.55);
+    }
+
+    .btn-primary {
+      background: #599a56;
+      color: #f0f6f9;
+      font-weight: 700;
+      padding: 0.85rem 2.5rem;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      font-size: 1.18rem;
+      transition: all 0.35s ease;
+      box-shadow: 0 6px 18px rgba(89, 154, 86, 0.8);
+      user-select: none;
+      transform-origin: center;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background: #497b48;
+      color: #e0ebf4;
+      box-shadow: 0 10px 30px rgba(73, 123, 72, 0.9);
+      outline: none;
+      animation-play-state: paused;
+      transform: scale(1.05);
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 6px 18px rgba(89, 154, 86, 0.8);
+      }
+      50% {
+        box-shadow: 0 10px 28px rgba(89, 154, 86, 1);
+      }
+    }
+
+    section {
+      margin-top: 3.5rem;
+    }
+
+    section h2 {
+      text-align: center;
+      font-size: 2.4rem;
+      margin-bottom: 2.2rem;
+      color: #1B4D3E;
+      text-shadow: 1px 1px 2px rgba(89, 154, 86, 0.3);
+    }
+
+    .highlight-text {
+      font-weight: 700;
+      color: #4a8548;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.6rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 6px 15px rgba(27, 77, 62, 0.15);
+      padding: 2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      cursor: default;
+    }
+
+    .feature-card:hover,
+    .feature-card:focus-within {
+      transform: translateY(-9px);
+      box-shadow: 0 15px 35px rgba(27, 77, 62, 0.3);
+      outline: none;
+    }
+
+    .feature-icon {
+      font-size: 3.8rem;
+      color: #4a8548;
+      margin-bottom: 1.3rem;
+    }
+
+    .feature-title {
+      font-size: 1.4rem;
+      color: #1B4D3E;
+      font-weight: 700;
+      margin-bottom: 1.1rem;
+      text-align: center;
+    }
+
+    .feature-desc {
+      font-size: 1.05rem;
+      color: #2f4f3b;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .bio-text {
+      max-width: 900px;
+      margin: 0 auto 2.8rem auto;
+      font-size: 1.2rem;
+      line-height: 1.7;
+      color: #12402b;
+      user-select: text;
+      text-align: center;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .info-text {
+      max-width: 850px;
+      margin: 1.8rem auto 0 auto;
+      font-size: 1.15rem;
+      line-height: 1.6;
+      color: #123f2c;
+      text-align: center;
+      user-select: text;
+    }
+
+    /* Motion picture container */
+    .motion-container {
+      margin-top: 3.2rem;
+      perspective: 1300px;
+      perspective-origin: 50% 50%;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      min-height: 300px;
+      position: relative;
+    }
+
+    .motion-picture {
+      width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(74, 133, 72, 0.4);
+      transform-style: preserve-3d;
+      transition: transform 0.12s ease-out;
+      cursor: grab;
+      display: block;
+    }
+
+    /* Info below motion picture */
+    .motion-info {
+      text-align: center;
+      margin-top: 1rem;
+      color: #135a31;
+      font-weight: 700;
+      font-size: 1.18rem;
+    }
+
+    /* Gallery container for pics */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap: 1.8rem;
+      margin-top: 2.5rem;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .gallery img {
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 7px 20px rgba(74, 133, 72, 0.25);
+      object-fit: cover;
+      height: 190px;
+      transition: transform 0.31s ease, box-shadow 0.31s ease;
+      cursor: pointer;
+      display: block;
+      outline-offset: 3px;
+    }
+
+    .gallery img:hover,
+    .gallery img:focus {
+      transform: scale(1.07);
+      box-shadow: 0 16px 38px rgba(74, 133, 72, 0.45);
+      outline: none;
+    }
+
+    #contact p {
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto 1.2rem;
+      font-size: 1rem;
+      color: #134720;
+      user-select: text;
+      line-height: 1.5;
+    }
+
+    #contact a {
+      color: #4a8548;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    #contact a:hover,
+    #contact a:focus {
+      color: #33602e;
+      outline: none;
+      text-decoration: underline;
+    }
+
+    /* Newsletter */
+    #newsletter {
+      max-width: 480px;
+      background: #06fdb3;
+      color: white;
+      padding: 2.2rem 2rem;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(136, 212, 12, 0.5);
+      margin: 3.5rem auto 6rem auto;
+      text-align: center;
+      user-select: none;
+    }
+
+    #newsletter h2 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+    }
+
+    #newsletter p {
+      font-size: 1.1rem;
+      margin-bottom: 1.7rem;
+      line-height: 1.5;
+      color: #0d0e0d;
+    }
+
+    #newsletter form {
+      display: flex;
+      justify-content: center;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+    }
+
+    #newsletter input[type=email] {
+      flex: 1 1 250px;
+      padding: 0.7rem 1rem;
+      border-radius: 40px;
+      border: none;
+      font-size: 1.05rem;
+      font-family: inherit;
+      outline-offset: 2px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    #newsletter input[type=email]:focus {
+      box-shadow: 0 0 8px #599a56;
+      outline: none;
+    }
+
+    #newsletter button {
+      background: #599a56;
+      color: white;
+      border: none;
+      font-weight: 700;
+      padding: 0.75rem 1.8rem;
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 12px rgba(89, 154, 86, 0.9);
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    #newsletter button:hover,
+    #newsletter button:focus {
+      background: #202020;
+      outline: none;
+    }
+
+    #newsletter-message {
+      margin-top: 1rem;
+      font-size: 1rem;
+      min-height: 1.4em;
+    }
+
+    footer {
+      background: #1B4D3E;
+      color: white;
+      text-align: center;
+      padding: 1.1rem 2rem;
+      font-size: 0.9rem;
+      user-select: none;
+      box-shadow: 0 -4px 10px rgba(27,77,62,0.8);
+    }
+
+    /* Visually hidden for accessibility */
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      ul.menu {
+        position: absolute;
+        top: 100%;
+        right: 2rem;
+        background: #1B4D3E;
+        flex-direction: column;
+        border-radius: 8px;
+        overflow: hidden;
+        max-height: 0;
+        width: 180px;
+        box-shadow: 0 8px 15px rgba(27, 77, 62, 0.9);
+      }
+
+      ul.menu.open {
+        max-height: 500px;
+      }
+
+      ul.menu li {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      ul.menu li:last-child {
+        border-bottom: none;
+      }
+
+      ul.menu li a {
+        padding: 1rem 1.3rem;
+        display: block;
+      }
+
+      .menu-toggle {
+        display: inline-block;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 2.4rem;
+      }
+      nav ul.menu {
+        width: 170px;
+      }
+      .motion-container {
+        min-height: 240px;
+      }
+      .gallery img {
+        height: 150px;
+      }
+      .feature-card {
+        padding: 1.4rem 1rem;
+      }
+      #newsletter form {
+        flex-direction: column;
+      }
+      #newsletter input[type=email] {
+        flex: 1 1 100%;
+      }
+      #newsletter button {
+        width: 100%;
+        padding: 0.85rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav role="navigation" aria-label="Main navigation">
+      <div class="logo" aria-label="Nomusa's Recycle Logo">Nomusa's Recycle</div>
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primaryMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="menu" id="primaryMenu">
+        <li><a href="#home" tabindex="0">Home</a></li>
+        <li><a href="#services" tabindex="0">Services</a></li>
+        <li><a href="#recycling-info" tabindex="0">Why Recycling Matters</a></li>
+        <li><a href="#about" tabindex="0">About Us</a></li>
+        <li><a href="#gallery" tabindex="0">Gallery</a></li>
+        <li><a href="#newsletter" tabindex="0">Newsletter</a></li>
+        <li><a href="#contact" tabindex="0">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero fade-slide" role="banner" aria-label="Nomusa's Recycle Hero Section">
+      <h1>Protect Our Planet with <span class="highlight-text">Nomusa's Recycle</span></h1>
+      <p>Leading the way in <strong>sustainable waste management</strong> and recycling solutions. Join us on the journey to create a cleaner, healthier world.</p>
+      <button class="btn-primary" id="learnMoreBtn" aria-describedby="scrollDownDesc">Learn More</button>
+      <span id="scrollDownDesc" class="visually-hidden">Scroll down to services section</span>
+    </section>
+
+    <section id="services" aria-labelledby="servicesTitle" class="fade-slide">
+      <h2 id="servicesTitle">Our Services</h2>
+      <div class="features">
+        <div class="feature-card" tabindex="0" role="article" aria-label="Residential Recycling Service">
+          <div class="feature-icon" aria-hidden="true">♻️</div>
+          <div class="feature-title">Residential Recycling</div>
+          <p class="feature-desc">Curbside pickup and convenient recycling bins placed within neighborhoods to encourage eco-friendly habits at home.</p>
+        </div>
+        <div class="feature-card" tabindex="0" role="article" aria-label="Commercial Waste Management">
+          <div class="feature-icon" aria-hidden="true">🏢</div>
+          <div class="feature-title">Commercial Waste Management</div>
+          <p class="feature-desc">Customized programs for offices, factories, and retail businesses ensuring proper segregation and recycling practices.</p>
+        </div>
+        <div class="feature-card" tabindex="0" role="article" aria-label="Education & Awareness">
+          <div class="feature-icon" aria-hidden="true">📚</div>
+          <div class="feature-title">Education & Awareness</div>
+          <p class="feature-desc">Engaging campaigns, workshops, and school programs focused on reducing waste and promoting sustainability.</p>
+        </div>
+        <div class="feature-card" tabindex="0" role="article" aria-label="Electronic Waste Recycling">
+          <div class="feature-icon" aria-hidden="true">💻</div>
+          <div class="feature-title">Electronic Waste Recycling</div>
+          <p class="feature-desc">Safe collection and responsible disposal of electronic devices to minimize environmental hazards.</p>
+        </div>
+        <div class="feature-card" tabindex="0" role="article" aria-label="Plastic & Metal Recycling">
+          <div class="feature-icon" aria-hidden="true">🛢️</div>
+          <div class="feature-title">Plastic & Metal Recycling</div>
+          <p class="feature-desc">Sorting, processing, and repurposing plastics and metals to reduce landfill impact and foster material reuse.</p>
+        </div>
+        <div class="feature-card" tabindex="0" role="article" aria-label="Organic Waste Composting">
+          <div class="feature-icon" aria-hidden="true">🌿</div>
+          <div class="feature-title">Organic Waste Composting</div>
+          <p class="feature-desc">Turning food scraps and green waste into nutrient-rich compost for agriculture and gardening applications.</p>
+        </div>
+        <div class="feature-card" tabindex="0" role="article" aria-label="Hazardous Waste Management">
+          <div class="feature-icon" aria-hidden="true">☣️</div>
+          <div class="feature-title">Hazardous Waste Management</div>
+          <p class="feature-desc">Specialized handling and safe disposal solutions for hazardous materials to protect people and environment.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="recycling-info" aria-labelledby="recyclingInfoTitle" class="fade-slide">
+      <h2 id="recyclingInfoTitle">Why Recycling Matters</h2>
+      <p class="info-text">
+        Recycling reduces the amount of waste sent to landfills and incinerators, conserves natural resources, saves energy, reduces greenhouse gas emissions, and supports sustainable economic growth. Every item recycled contributes to a cleaner environment and a healthier planet for future generations.
+      </p>
+      <p class="info-text">
+        Tips for effective recycling include properly sorting recyclable materials, cleaning containers before recycling, avoiding contamination by not including non-recyclable items, and reducing waste by reusing and repurposing whenever possible.
+      </p>
+    </section>
+
+    <section id="about" aria-labelledby="aboutTitle" class="fade-slide">
+      <h2 id="aboutTitle">About Nomusa's Recycle</h2>
+      <p class="bio-text">
+        Since 2010, <strong>Nomusa's Recycle</strong> has been at the forefront of environmentally responsible waste management. Our passion is converting waste into valuable resources while empowering communities to adopt greener lifestyles. We combine state-of-the-art technology with community outreach programs to reduce landfill dependence and promote a sustainable future. Our comprehensive services cover residential, commercial, electronic, plastic, metal, organic, and hazardous waste recycling. Dedicated to transparency and excellence, we strive to make recycling accessible and effective for all.
+      </p>
+      <div class="gallery" aria-label="About section images" role="list">
+        <img src="https://media.istockphoto.com/id/1439954031/photo/boy-and-father-wearing-gloves-collecting-bottles.webp?a=1&b=1&s=612x612&w=0&k=20&c=LQhjdLeggCPG7Ymdu1S0QnAMLHQ9jJKgbA8NK4QIlpU=" alt="Worker collecting plastic bottles for recycling" tabindex="0" role="listitem" />
+        <img src="https://images.unsplash.com/photo-1723133371535-1412bc2e412e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTV8fHN1c3RhaW5hYmlsaXR5fGVufDB8fDB8fHww" alt="Close-up of electronic waste for recycling" tabindex="0" role="listitem" />
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Green recycling plant facility" tabindex="0" role="listitem" />
+      </div>
+    </section>
+
+    <section id="motion" aria-label="Motion Pictures Section" class="fade-slide">
+      <h2>Experience Recycling in Action</h2>
+      <div class="motion-container" id="motionContainer" aria-live="polite" aria-atomic="true" aria-relevant="additions">
+        <img src="https://media.istockphoto.com/id/2083463979/photo/hydroelectric-engineers-teamwork-day-renewable-energy-systems.jpg?s=612x612&w=0&k=20&c=ydrvlOdxUpaiWP1wyZKHRTsBMsGGwyOsL6ZIXDYEJrY=" class="motion-picture" id="motionPic" />
+        <div class="motion-info" id="motionInfo">Our dedicated team carefully sorts recyclables to maximize reuse and minimize waste.</div>
+      </div>
+    </section>
+
+    <section id="gallery" aria-labelledby="galleryTitle" class="fade-slide">
+      <h2 id="galleryTitle">Gallery</h2>
+      <div class="gallery" role="list">
+        <img src="https://media.istockphoto.com/id/2178912117/photo/full-frame-of-trash-plastics-and-cans-on-white-background.jpg?s=612x612&w=0&k=20&c=gSPwiidui1dT4tw5e1CylpiNl9B2aMIAd2cfE97GlFk=" alt="Community recycling bins in neighborhood" tabindex="0" role="listitem" />
+        <img src="https://media.istockphoto.com/id/1435661969/photo/close-up-of-children-holding-a-planet-at-the-beach.webp?a=1&b=1&s=612x612&w=0&k=20&c=DzMpS97JzlsbjNlMLwam2x6w_0wLZDA6PiP4DLyt7J8=" alt="Metal scraps processed for recycling" tabindex="0" role="listitem" />
+        <img src="https://media.istockphoto.com/id/2163506581/photo/circular-economy-sustainability-concept-person-typing-on-laptop-with-icons-circular-economy.jpg?s=612x612&w=0&k=20&c=ItZVUPFU0UAoSY1eQIzI9pUyzDIApV73pu_RPqTVFlc=" alt="Plastic bottles collected for recycling" tabindex="0" role="listitem" />
+        <img src="https://images.unsplash.com/photo-1515191107209-c28698631303?auto=format&fit=crop&w=800&q=80" alt="Large machinery processing recyclables" tabindex="0" role="listitem" />
+        <img src="https://media.istockphoto.com/id/1199683640/photo/conveyor-belt-for-recyclables-in-waste-processing-facility.jpg?s=612x612&w=0&k=20&c=Fc1LluwDxld3-MOA6Zi0U8KRI53VE0L1xx0HgP5AlB8=" tabindex="0" role="listitem" />
+      </div>
+    </section>
+
+    <section id="newsletter" aria-labelledby="newsletterTitle" class="fade-slide">
+      <h2 id="newsletterTitle">Subscribe to Our Newsletter</h2>
+      <p>Stay updated on the latest recycling tips, company news, and eco-friendly initiatives.</p>
+      <form id="newsletterForm" novalidate aria-live="polite" aria-atomic="true">
+        <label for="emailSubscribe" class="visually-hidden">Email address</label>
+        <input type="email" id="emailSubscribe" name="emailSubscribe" placeholder="Enter your email address" required aria-required="true" autocomplete="email" />
+        <button type="submit" aria-label="Subscribe to newsletter">Subscribe</button>
+      </form>
+      <div id="newsletter-message" role="alert" aria-live="assertive" aria-atomic="true"></div>
+    </section>
+
+    <section id="contact" aria-labelledby="contactTitle" class="fade-slide">
+      <h2 id="contactTitle">Get in Touch</h2>
+      <p>
+        Email: <a href="mailto:zwanenkosinomusa527@gmail.com" tabindex="0">zwanenkosinomusa527@gmail.com</a><br />
+        Phone: <a href="tel:+27680866082" tabindex="0">+27680866082</a><br />
+        Address: 34 Kelkiewyn street Tedstoneville Germiston 1428
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2024 Nomusa's Recycle. All rights reserved.
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // Menu toggle button functionality
+      const menuToggle = document.getElementById('menuToggle');
+      const primaryMenu = document.getElementById('primaryMenu');
+
+      menuToggle.addEventListener('click', () => {
+        const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+        menuToggle.setAttribute('aria-expanded', String(!expanded));
+        primaryMenu.classList.toggle('open');
+        menuToggle.classList.toggle('open');
+      });
+
+      // Close menu when a link is clicked (on mobile)
+      primaryMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 768) {
+            primaryMenu.classList.remove('open');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            menuToggle.classList.remove('open');
+          }
+        });
+      });
+
+      // Smooth scroll to services on Learn More btn click
+      const learnMoreBtn = document.getElementById('learnMoreBtn');
+      learnMoreBtn.addEventListener('click', () => {
+        document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      // Intersection Observer for fade-slide animations
+      const fadeElements = document.querySelectorAll('.fade-slide');
+
+      const observerOptions = {
+        threshold: 0.15
+      };
+
+      const fadeObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      fadeElements.forEach(el => fadeObserver.observe(el));
+
+      // Motion picture 3D tilt effect
+      const motionContainer = document.getElementById('motionContainer');
+      const motionPic = document.getElementById('motionPic');
+
+      function transformMovement(x, y) {
+        const maxRotation = 15; // degrees
+        let rotateX = (y / motionContainer.clientHeight) * maxRotation * 2 - maxRotation;
+        let rotateY = (x / motionContainer.clientWidth) * maxRotation * 2 - maxRotation;
+        motionPic.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      }
+
+      function resetTransform() {
+        motionPic.style.transition = 'transform 0.5s ease-out';
+        motionPic.style.transform = 'rotateX(0) rotateY(0) scale(1)';
+        setTimeout(() => {
+          motionPic.style.transition = '';
+        }, 500);
+      }
+
+      motionContainer.addEventListener('mousemove', (e) => {
+        const rect = motionContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        transformMovement(x, y);
+      });
+
+      motionContainer.addEventListener('mouseleave', () => {
+        resetTransform();
+      });
+
+      motionContainer.addEventListener('focus', () => {
+        motionPic.style.transform = 'scale(1.05)';
+      });
+
+      motionContainer.addEventListener('blur', () => {
+        resetTransform();
+      });
+
+      // Newsletter form submission
+      const newsletterForm = document.getElementById('newsletterForm');
+      const emailInput = document.getElementById('emailSubscribe');
+      const messageDiv = document.getElementById('newsletter-message');
+
+      newsletterForm.addEventListener('submit', e => {
+        e.preventDefault();
+        messageDiv.textContent = '';
+        const email = emailInput.value.trim();
+
+        if (!email) {
+          messageDiv.style.color = '#d9534f';
+          messageDiv.textContent = 'Please enter your email address.';
+          emailInput.focus();
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          messageDiv.style.color = '#d9534f';
+          messageDiv.textContent = 'Please enter a valid email address.';
+          emailInput.focus();
+          return;
+        }
+
+        // Simulate success submission (replace with real API call as needed)
+        messageDiv.style.color = '#28a745';
+        messageDiv.textContent = 'Thank you for subscribing!';
+
+        newsletterForm.reset();
+      });
+    })();
+  </script>
+</body>
+</html>
+
